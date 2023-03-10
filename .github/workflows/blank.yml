@@ -1,34 +1,29 @@
-name: Build and Deploy
+name: Build and Deploy Beats Up
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - master
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Install dependencies
-      run: |
-        haxelib install flixel
-        lime install flixel
-        lime install android
+      - name: Install dependencies
+        run: haxelib install all
 
-    - name: Build APK
-      run: |
-        lime build android -release
+      - name: Build game
+        run: haxe build.hxml
 
-    - name: Sign and Package APK
-      run: |
-        jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore keystore.jks build/android/release/bin/MyGame-release-unsigned.apk alias_name
-        zipalign -v 4 build/android/release/bin/MyGame-release-unsigned.apk MyGame.apk
+      - name: Create APK
+        run: lime build android -Dlegacy
 
-    - name: Upload APK
-      uses: actions/upload-artifact@v2
-      with:
-        name: MyGame
-        path: MyGame.apk
+      - name: Deploy APK to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v0.1.1
+        with:
+          app_token: ${{ secrets.FIREBASE_APP_TOKEN }}
+          apk_path: bin/android/bin/BeatsUp.apk
