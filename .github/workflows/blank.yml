@@ -1,0 +1,34 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install dependencies
+      run: |
+        haxelib install flixel
+        lime install flixel
+        lime install android
+
+    - name: Build APK
+      run: |
+        lime build android -release
+
+    - name: Sign and Package APK
+      run: |
+        jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore keystore.jks build/android/release/bin/MyGame-release-unsigned.apk alias_name
+        zipalign -v 4 build/android/release/bin/MyGame-release-unsigned.apk MyGame.apk
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v2
+      with:
+        name: MyGame
+        path: MyGame.apk
