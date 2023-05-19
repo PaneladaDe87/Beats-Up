@@ -15,8 +15,10 @@ jobs:
         with:
           haxe-version: '4.3.1'
 
-      - name: Install OpenFL
-        run: haxelib install openfl
+      - name: Install OpenFL and Lime
+        run: |
+          haxelib install openfl
+          haxelib install lime
         
       - name: Install HaxeFlixel
         run: haxelib install flixel
