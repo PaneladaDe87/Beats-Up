@@ -11,14 +11,14 @@ jobs:
 
     steps:
       - name: Set up Haxe
-        uses: krdlab/setup-haxe@v2
+        uses: krdlab/setup-haxe@v1
         with:
           haxe-version: '4.3.1'
 
       - name: Install OpenFL and Lime
         run: |
-          haxelib install openfl
-          haxelib install lime
+          haxelib install openfl 8.9.6
+          haxelib install lime 7.7.0
         
       - name: Install HaxeFlixel
         run: haxelib install flixel
