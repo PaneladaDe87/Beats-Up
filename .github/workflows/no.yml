@@ -1,0 +1,31 @@
+name: Build Game
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up Haxe
+        uses: HaxeFoundation/setup-haxe@v1
+        with:
+          haxe-version: '4.2.1'
+
+      - name: Install Lime and OpenFL
+        run: haxelib install lime openfl
+
+      - name: Install HaxeFlixel
+        run: haxelib install flixel
+
+      - name: Build Windows
+        run: lime build windows
+
+      - name: Build Android
+        run: lime build android
+
+      - name: Build Linux
+        run: lime build linux
